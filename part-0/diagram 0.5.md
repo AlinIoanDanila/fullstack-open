@@ -2,9 +2,10 @@ Diagram for part 0.5 of the Fullstack Open project showing the diagram depicting
 
 The diagram is similar to the one used in the course, only the file naming being changed.
 
+```mermaid
 sequenceDiagram
-participant browser
-participant server
+    participant browser
+    participant server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/spa
     activate server
@@ -29,3 +30,4 @@ participant server
     deactivate server
 
     Note right of browser: The browser executes the callback function that renders the notes
+```
