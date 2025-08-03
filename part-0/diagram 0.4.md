@@ -12,7 +12,7 @@ sequenceDiagram
     server-->>browser: URL Redirect to 'notes'
     deactivate server
 
-    Note right of browser: The browser sends a POST request to the server address 'new_note' with the note payload (ex: {note: ${newNote}})
+    Note right of browser: The browser sends a POST request to the server address 'new_note' with the note payload (ex: {note: ${newNote}}), the server asks for new requests to get the updated data (default behavior of form submition in HTML). This means getting the entire page again, with updated JSON data.
 
     %% Please note the next part is copied from the initial diagram.
 
@@ -31,7 +31,7 @@ sequenceDiagram
     server-->>browser: the JavaScript file
     deactivate server
 
-    Note right of browser: The browser starts executing the JavaScript code that fetches the JSON from the server
+    Note right of browser: The browser starts executing the JavaScript code that fetches the JSON from the server, including the newly added note, newNote.
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
     activate server
