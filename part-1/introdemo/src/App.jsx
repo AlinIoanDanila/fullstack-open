@@ -67,12 +67,9 @@ const App = () => {
     0
   );
 
-  const createVotesObject = (anecdotes) =>
-    Object.fromEntries(anecdotes.map((_, i) => [i, 0]));
+  const createVotesObject = (anecdotes) => Object.fromEntries(anecdotes.map((_, i) => [i, 0]));
 
-  const [anecdoteVotes, setAnecdoteVotes] = useState(
-    createVotesObject(anecdotes)
-  );
+  const [anecdoteVotes, setAnecdoteVotes] = useState(createVotesObject(anecdotes));
 
   const handleNextAnecdote = () => {
     let randomAnecdoteID = Math.floor(Math.random() * anecdotes.length);
