@@ -1,25 +1,29 @@
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
+
+import Person from "./components/Person";
+import personService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
-  const [newPerson, setNewPerson] = useState({});
+  const [newPerson, setNewPerson] = useState({
+    name: "",
+    number: "",
+    // id: "",
+  });
   const [nameFilter, setNameFilter] = useState("");
   const [filteredPersons, setFilteredPersons] = useState([]);
 
   const inputNameRef = useRef();
 
   useEffect(() => {
-    axios
-      .get(`${baseUrl}/persons`)
-      .then((response) => setPersons(response.data));
+    personService.getAll().then((data) => setPersons(data));
   }, []);
 
   const handlePersonChange = (e) => {
     setNewPerson((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
-      id: persons.length + 1,
+      // id: (persons.length + 1).toString(),
     }));
   };
 
@@ -30,15 +34,49 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (persons.findIndex((person) => person.name === newPerson.name) !== -1) {
-      alert(`${newPerson.name} is already added`);
-      inputNameRef.current.focus();
+    let newPersonIndex = persons.findIndex(
+      (person) => person.name === newPerson.name
+    );
+
+    if (newPersonIndex < 0) {
+      personService
+        .createPerson(newPerson)
+        .then((res) => setPersons((prev) => [...prev, res]))
+        .catch((error) => console.log(error))
+        .finally(() => {
+          setNewPerson({ name: "", number: "" });
+        });
       return;
     }
 
-    axios
-      .post(`${baseUrl}/persons`, newPerson)
-      .then(() => setPersons((prev) => [...prev, newPerson]));
+    let isPersonBeingUpdated = confirm(
+      `${newPerson.name} is already added, replace the old number with a new one?`
+    );
+    if (!isPersonBeingUpdated) return;
+
+    personService
+      .patchPerson(persons[newPersonIndex].id, newPerson)
+      .then((res) => {
+        setPersons((prevPersons) =>
+          prevPersons.map((person) =>
+            person.id === persons[newPersonIndex].id ? res : person
+          )
+        );
+      })
+      .catch((error) => console.log(error));
+
+    inputNameRef.current.focus();
+    return;
+  };
+
+  const handlePersonDelete = (id) => {
+    personService
+      .deletePerson(id)
+      .then(() => {
+        const updatedPersonList = persons.filter((person) => person.id !== id);
+        setPersons(updatedPersonList);
+      })
+      .catch((error) => console.log(error));
   };
 
   const filterByName = () => {
@@ -68,11 +106,21 @@ const App = () => {
       </div>
       <form onSubmit={handleSubmit}>
         <div>
-          name:{" "}
-          <input name="name" ref={inputNameRef} onChange={handlePersonChange} />
+          name:
+          <input
+            name="name"
+            ref={inputNameRef}
+            value={newPerson.name}
+            onChange={handlePersonChange}
+          />
         </div>
         <div>
-          number: <input name="number" onChange={handlePersonChange} />
+          number:
+          <input
+            name="number"
+            value={newPerson.number}
+            onChange={handlePersonChange}
+          />
         </div>
         <div>
           <button type="submit">add</button>
@@ -81,23 +129,19 @@ const App = () => {
       <h2>Numbers</h2>
       {filteredPersons.length > 0
         ? filteredPersons.map((person) => (
-            <div style={{ display: "flex", columnGap: "10px" }} key={person.id}>
-              <p>{person.name}</p>
-              <p>{person.number}</p>
-            </div>
+            <Person
+              key={person.id}
+              person={person}
+              handleDelete={handlePersonDelete}
+            />
           ))
         : persons.map((person) => (
-            <div style={{ display: "flex", columnGap: "10px" }} key={person.id}>
-              <p>{person.name}</p>
-              <p>{person.number}</p>
-            </div>
+            <Person
+              key={person.id}
+              person={person}
+              handleDelete={handlePersonDelete}
+            />
           ))}
-      {/* {persons.map((person) => (
-        <div style={{ display: "flex", columnGap: "10px" }} key={person.id}>
-          <p>{person.name}</p>
-          <p>{person.number}</p>
-        </div>
-      ))} */}
     </div>
   );
 };
