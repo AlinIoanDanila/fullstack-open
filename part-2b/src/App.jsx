@@ -8,7 +8,6 @@ const App = () => {
   const [newPerson, setNewPerson] = useState({
     name: "",
     number: "",
-    // id: "",
   });
   const [nameFilter, setNameFilter] = useState("");
   const [filteredPersons, setFilteredPersons] = useState([]);
@@ -34,9 +33,7 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    let newPersonIndex = persons.findIndex(
-      (person) => person.name === newPerson.name
-    );
+    let newPersonIndex = persons.findIndex((person) => person.name === newPerson.name);
 
     if (newPersonIndex < 0) {
       personService
@@ -49,18 +46,14 @@ const App = () => {
       return;
     }
 
-    let isPersonBeingUpdated = confirm(
-      `${newPerson.name} is already added, replace the old number with a new one?`
-    );
+    let isPersonBeingUpdated = confirm(`${newPerson.name} is already added, replace the old number with a new one?`);
     if (!isPersonBeingUpdated) return;
 
     personService
       .patchPerson(persons[newPersonIndex].id, newPerson)
       .then((res) => {
         setPersons((prevPersons) =>
-          prevPersons.map((person) =>
-            person.id === persons[newPersonIndex].id ? res : person
-          )
+          prevPersons.map((person) => (person.id === persons[newPersonIndex].id ? res : person))
         );
       })
       .catch((error) => console.log(error));
@@ -85,9 +78,7 @@ const App = () => {
       return;
     }
 
-    const newFilteredPersons = persons.filter((person) =>
-      person.name.toLocaleLowerCase().includes(nameFilter)
-    );
+    const newFilteredPersons = persons.filter((person) => person.name.toLocaleLowerCase().includes(nameFilter));
     setFilteredPersons(newFilteredPersons);
   };
 
@@ -96,31 +87,17 @@ const App = () => {
       <h2>Phonebook</h2>
       <div style={{ display: "flex", alignItems: "center" }}>
         <p>filter by name:</p>
-        <input
-          style={{ height: 20 }}
-          name="filter"
-          type="text"
-          onChange={handleFilterChange}
-        />
+        <input style={{ height: 20 }} name="filter" type="text" onChange={handleFilterChange} />
         <button onClick={filterByName}>Show</button>
       </div>
       <form onSubmit={handleSubmit}>
         <div>
           name:
-          <input
-            name="name"
-            ref={inputNameRef}
-            value={newPerson.name}
-            onChange={handlePersonChange}
-          />
+          <input name="name" ref={inputNameRef} value={newPerson.name} onChange={handlePersonChange} />
         </div>
         <div>
           number:
-          <input
-            name="number"
-            value={newPerson.number}
-            onChange={handlePersonChange}
-          />
+          <input name="number" value={newPerson.number} onChange={handlePersonChange} />
         </div>
         <div>
           <button type="submit">add</button>
@@ -128,20 +105,8 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       {filteredPersons.length > 0
-        ? filteredPersons.map((person) => (
-            <Person
-              key={person.id}
-              person={person}
-              handleDelete={handlePersonDelete}
-            />
-          ))
-        : persons.map((person) => (
-            <Person
-              key={person.id}
-              person={person}
-              handleDelete={handlePersonDelete}
-            />
-          ))}
+        ? filteredPersons.map((person) => <Person key={person.id} person={person} handleDelete={handlePersonDelete} />)
+        : persons.map((person) => <Person key={person.id} person={person} handleDelete={handlePersonDelete} />)}
     </div>
   );
 };
