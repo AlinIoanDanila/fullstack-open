@@ -3,8 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import personService from "./services/persons";
 import Notification from "./components/Notification";
 import Filter from "./components/Filter";
-import Form from "./components/Form";
-import { PeopleList } from "./components/PeopleList";
+import PersonForm from "./components/PersonForm";
+import PersonList from "./components/PersonList";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -39,6 +39,8 @@ const App = () => {
     let newPersonIndex = persons.findIndex(
       (person) => person.name === newPerson.name
     );
+
+    debugger;
 
     if (newPersonIndex < 0) {
       personService
@@ -122,17 +124,20 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification notificationType={notificationType} />
+
       <Filter
         handleFilterChange={handleFilterChange}
         filterByName={filterByName}
       />
-      <Form
-        handlePersonChange={handlePersonChange}
-        handleSubmit={handleSubmit}
-        inputNameRef={inputNameRef}
+
+      <PersonForm
         newPerson={newPerson}
+        onChange={handlePersonChange}
+        onSubmit={handleSubmit}
+        inputNameRef={inputNameRef}
       />
-      <PeopleList
+
+      <PersonList
         persons={persons}
         filteredPersons={filteredPersons}
         handlePersonDelete={handlePersonDelete}

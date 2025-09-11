@@ -1,10 +1,6 @@
 import Person from "./Person";
 
-export const PeopleList = ({
-  persons,
-  filteredPersons,
-  handlePersonDelete,
-}) => {
+const PersonList = ({ persons, filteredPersons, handlePersonDelete }) => {
   return (
     <>
       <h2>Numbers</h2>
@@ -26,3 +22,5 @@ export const PeopleList = ({
     </>
   );
 };
+
+export default PersonList;
