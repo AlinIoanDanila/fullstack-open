@@ -40,8 +40,6 @@ const App = () => {
       (person) => person.name === newPerson.name
     );
 
-    debugger;
-
     if (newPersonIndex < 0) {
       personService
         .createPerson(newPerson)
