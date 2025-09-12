@@ -1,4 +1,3 @@
-import cors from "cors";
 import morgan from "morgan";
 import express from "express";
 
@@ -6,7 +5,6 @@ const app = express();
 
 app.use(express.static("dist"));
 
-app.use(cors());
 app.use(
   morgan(function (tokens, req, res) {
     return [
