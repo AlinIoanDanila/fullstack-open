@@ -28,29 +28,6 @@ const unknownEndpoint = (request, response) => {
 
 app.use(express.json());
 
-let persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
 app.get("/api/info", async (req, res) => {
   const length = await Person.countDocuments();
 
@@ -81,27 +58,24 @@ app.get("/api/persons/:id", async (req, res) => {
   return res.json(person);
 });
 
-app.post("/api/persons", async (req, res) => {
-  const { name, number } = req.body;
-  if (!name || !number) return res.status(400).json({ error: "Missing required fields", fields: ["name", "number"] });
+// app.post("/api/persons", async (req, res) => {
+//   const { name, number } = req.body;
+//   if (!name || !number) return res.status(400).json({ error: "Missing required fields", fields: ["name", "number"] });
 
-  if (persons.find((person) => person.name === name))
-    return res.status(409).json({ error: "Conflict", message: `Name ${name} already exists` });
+//   if (persons.find((person) => person.name === name))
+//     return res.status(409).json({ error: "Conflict", message: `Name ${name} already exists` });
 
-  const newPerson = {
-    name: req.body.name,
-    number: req.body.number,
-  };
+//   const newPerson = {
+//     name: req.body.name,
+//     number: req.body.number,
+//   };
 
-  return await Person.insertOne(newPerson).then((response) => res.json(response));
-});
+//   return await Person.insertOne(newPerson).then((response) => res.json(response));
+// });
 
 app.delete("/api/persons/:id", async (req, res) => {
   const { id } = req.params;
   return await Person.findByIdAndDelete(id).then((response) => res.send(response).status(204).end());
-  // persons = persons.filter((person) => person.id !== id.toString());
-
-  // return res.status(204).end();
 });
 
 app.use(unknownEndpoint);
