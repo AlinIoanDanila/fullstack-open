@@ -36,9 +36,7 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    let newPersonIndex = persons.findIndex(
-      (person) => person.name === newPerson.name
-    );
+    let newPersonIndex = persons.findIndex((person) => person.name === newPerson.name);
 
     if (newPersonIndex < 0) {
       personService
@@ -58,18 +56,14 @@ const App = () => {
       return;
     }
 
-    let isPersonBeingUpdated = confirm(
-      `${newPerson.name} is already added, replace the old number with a new one?`
-    );
+    let isPersonBeingUpdated = confirm(`${newPerson.name} is already added, replace the old number with a new one?`);
     if (!isPersonBeingUpdated) return;
 
     personService
       .patchPerson(persons[newPersonIndex].id, newPerson)
       .then((res) => {
         setPersons((prevPersons) =>
-          prevPersons.map((person) =>
-            person.id === persons[newPersonIndex].id ? res : person
-          )
+          prevPersons.map((person) => (person.id === persons[newPersonIndex].id ? res : person))
         );
         setNotificationType({
           message: `Updated ${newPerson.name}`,
@@ -112,9 +106,7 @@ const App = () => {
       return;
     }
 
-    const newFilteredPersons = persons.filter((person) =>
-      person.name.toLocaleLowerCase().includes(nameFilter)
-    );
+    const newFilteredPersons = persons.filter((person) => person.name.toLocaleLowerCase().includes(nameFilter));
     setFilteredPersons(newFilteredPersons);
   };
 
@@ -123,10 +115,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <Notification notificationType={notificationType} />
 
-      <Filter
-        handleFilterChange={handleFilterChange}
-        filterByName={filterByName}
-      />
+      <Filter handleFilterChange={handleFilterChange} filterByName={filterByName} />
 
       <PersonForm
         newPerson={newPerson}
@@ -135,11 +124,11 @@ const App = () => {
         inputNameRef={inputNameRef}
       />
 
-      <PersonList
-        persons={persons}
-        filteredPersons={filteredPersons}
-        handlePersonDelete={handlePersonDelete}
-      />
+      {persons.length ? (
+        <PersonList persons={persons} filteredPersons={filteredPersons} handlePersonDelete={handlePersonDelete} />
+      ) : (
+        <p>No info at the moment</p>
+      )}
     </div>
   );
 };

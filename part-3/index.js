@@ -1,5 +1,7 @@
+import "dotenv/config";
 import morgan from "morgan";
 import express from "express";
+import Person from "./models/Person.js";
 
 const app = express();
 
@@ -49,26 +51,28 @@ let persons = [
   },
 ];
 
-app.get("/info", (req, res) => {
+app.get("/api/info", async (req, res) => {
+  const length = await Person.countDocuments();
+
   return res.send(`
     <!DOCTYPE html>
     <html>
       <head><title>Hello</title></head>
       <body>
-        <p>Phonebook has info for ${persons.length} people</p>
+        <p>Phonebook has info for ${length} people</p>
         <p>${new Date().toString()}</p>
       </body>
     </html>
   `);
 });
 
-app.get("/api/persons", (req, res) => {
-  return res.json(persons);
+app.get("/api/persons", async (req, res) => {
+  return await Person.find({}).then((persons) => res.json(persons));
 });
 
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", async (req, res) => {
   const { id } = req.params;
-  let person = persons.find((person) => person.id === id.toString());
+  let person = await Person.findById(id);
 
   if (!person) {
     return res.status(404).end();
@@ -77,33 +81,27 @@ app.get("/api/persons/:id", (req, res) => {
   return res.json(person);
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", async (req, res) => {
   const { name, number } = req.body;
-  if (!name || !number)
-    return res
-      .status(400)
-      .json({ error: "Missing required fields", fields: ["name", "number"] });
+  if (!name || !number) return res.status(400).json({ error: "Missing required fields", fields: ["name", "number"] });
 
   if (persons.find((person) => person.name === name))
-    return res
-      .status(409)
-      .json({ error: "Conflict", message: `Name ${name} already exists` });
+    return res.status(409).json({ error: "Conflict", message: `Name ${name} already exists` });
 
   const newPerson = {
-    id: Math.floor(Math.random() * 1000).toString(),
     name: req.body.name,
     number: req.body.number,
   };
 
-  persons.push(newPerson);
-  return res.json(newPerson).status(201).end();
+  return await Person.insertOne(newPerson).then((response) => res.json(response));
 });
 
-app.delete("/api/persons/:id", (req, res) => {
+app.delete("/api/persons/:id", async (req, res) => {
   const { id } = req.params;
-  persons = persons.filter((person) => person.id !== id.toString());
+  return await Person.findByIdAndDelete(id).then((response) => res.send(response).status(204).end());
+  // persons = persons.filter((person) => person.id !== id.toString());
 
-  return res.status(204).end();
+  // return res.status(204).end();
 });
 
 app.use(unknownEndpoint);
