@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+mongoose.set("debug", true);
 
 const url = process.env.MONGODB_URI;
 mongoose.set("strictQuery", false);
